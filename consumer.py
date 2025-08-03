@@ -6,7 +6,7 @@ from kafka import KafkaConsumer
 from datetime import datetime
 
 # Adresse du broker Kafka exposé par ta VM
-BROKER = "34.255.191.210:9092"
+BROKER = os.getenv("KAFKA_BROKER", "localhost:9092")
 TOPIC = "crypto-prices"
 GROUP_ID = "price-writers"
 CSV_FILE = "prices.csv"

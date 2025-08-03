@@ -4,7 +4,7 @@
 echo "TEST_TIMESTAMP,TESTSYM,999.99" >> prices.csv
 
 # 2. Appel de l’API et filtration du prix renvoyé
-RESPONSE=$(curl -s http://34.255.191.210:8000/price/latest)
+RESPONSE=$(curl -s http://108.130.75.192:8000/price/latest)
 PRICE=$(echo "$RESPONSE" | grep -oP '(?<="price":)[0-9]+\.[0-9]+')
 
 # 3. Vérification simple

@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
+import os
 import time
 import requests
 from kafka import KafkaProducer
 
 API_URL = "https://api.binance.com/api/v3/ticker/price"
 SYMBOL = "BTCUSDT"
-BROKER = "34.255.191.210:9092"
+BROKER = os.getenv("KAFKA_BROKER", "localhost:9092")
 TOPIC = "crypto-prices"
 
 # Création d’un producteur Kafka 100% Python

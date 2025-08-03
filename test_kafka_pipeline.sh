@@ -3,7 +3,7 @@
 # Usage: ./test_kafka_pipeline.sh
 
 TOPIC="crypto-prices"
-BROKER_IP="34.255.191.210:9092"       # IP publique de la VM
+BROKER_IP="108.130.75.192:9092"       # IP publique de la VM
 CSV="prices.csv"
 TEST_SYMBOL="AUTOTEST"
 TEST_PRICE="123.45"

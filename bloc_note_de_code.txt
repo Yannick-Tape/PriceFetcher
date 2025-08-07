@@ -1,0 +1,43 @@
+###########
+1. Créer le .env à la racine du projet puis le sourcer
+VM_IP=63.35.185.118
+KAFKA_BROKER=${VM_IP}:9092
+MINIO_ENDPOINT=http://127.0.0.1:9000
+MINIO_ACCESS_KEY=minioadmin
+MINIO_SECRET_KEY=minioadmini
+
+source .env
+
+###########
+2. Supprimer tous les anciens conteneurs et volumes puis les relancer
+
+docker ps -a
+docker stop $(docker ps -aq)
+docker rm -f $(docker ps -aq)
+docker system prune --volumes
+docker ps -a
+
+docker-compose up -d
+
+
+###########
+3. exécuter ces codes chacun dans un terminal dedié 
+
+python3 price_fetcher.py
+
+cd ~/PriceFetcher && python3 producer.py
+
+cd ~/PriceFetcher && python3 consumer.py 
+
+cd ~/PriceFetcher && ./launch_minio.sh
+
+spark-submit \
+  --master local[2] \
+  --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.2.0,org.apache.hadoop:hadoop-aws:3.3.4 \
+  spark_job.py
+
+#Ensuite, après quelques micro-batches, listez les fichiers Parquet :
+cd ~/PriceFetcher && mc ls myminio/prices/strat1
+
+# voir le contenu des 5 premiers bacths
+./five_first_parquets.sh

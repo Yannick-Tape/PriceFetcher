@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -22,6 +23,7 @@ services:
 
   producer:
     build: .
+    command: python3 producer.py
     environment:
       - KAFKA_BROKER=${VM_IP}:9092
     depends_on:
@@ -29,7 +31,26 @@ services:
 
   consumer:
     build: .
+    command: python3 consumer.py
     environment:
       - KAFKA_BROKER=${VM_IP}:9092
     depends_on:
       - kafka
+
+  price-api:
+    image: price-api:phase2
+    container_name: price-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./prices.csv:/app/prices.csv"
+    depends_on:
+      - producer
+    entrypoint: >
+      sh -c "
+        echo '⏳ Waiting for /app/prices.csv…';
+        until [ -s /app/prices.csv ]; do sleep 1; done;
+        echo '✅ prices.csv found, starting API';
+        exec uvicorn main:app --host 0.0.0.0 --port 8000
+      "
+

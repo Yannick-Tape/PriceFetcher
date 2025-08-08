@@ -1,5 +1,6 @@
+
 ###########
-1. Créer le .env à la racine du projet puis le sourcer
+1. Créer le .env à la racine du projet (cd ~/PriceFetcher) puis le sourcer
 VM_IP=63.35.185.118
 KAFKA_BROKER=${VM_IP}:9092
 MINIO_ENDPOINT=http://127.0.0.1:9000
@@ -21,7 +22,7 @@ docker-compose up -d
 
 
 ###########
-3. exécuter ces codes chacun dans un terminal dedié 
+3. exécuter ces codes; chacun dans un terminal dedié 
 
 python3 price_fetcher.py
 
@@ -39,5 +40,39 @@ spark-submit \
 #Ensuite, après quelques micro-batches, listez les fichiers Parquet :
 cd ~/PriceFetcher && mc ls myminio/prices/strat1
 
+
 # voir le contenu des 5 premiers bacths
 ./five_first_parquets.sh
+
+-----------------
+
+spark-submit --master local[2] \
+  --packages org.apache.hadoop:hadoop-aws:3.3.4 \
+  cleaning_script.py
+
+-----------------
+
+spark-submit --master local[2] \
+  --packages org.apache.hadoop:hadoop-aws:3.3.4 \
+  features_build.py
+
+-----------------
+
+# Active ton venv PySpark si tu en utilises un
+source ~/PySpark/.venv/bin/activate
+# Installe pytest
+pip install pytest
+
+
+LABEL_HORIZON_STEPS=6 ROLLING_WINDOW=1000 LOG_EVERY=500 \
+spark-submit --master local[2] \
+  --packages org.apache.hadoop:hadoop-aws:3.3.4 \
+  river_trainer.py
+
+-----------------
+
+
+
+
+
+
